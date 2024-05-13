@@ -6,11 +6,10 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Transmission.API.RPC.Entity;
-using Newtonsoft.Json.Linq;
 using Transmission.API.RPC.Common;
 using Transmission.API.RPC.Arguments;
+using System.Text.Json;
 
 namespace Transmission.API.RPC
 {
@@ -77,18 +76,17 @@ namespace Transmission.API.RPC
 
 			var request = new TransmissionRequest("torrent-add", torrent);
 			var response = await SendRequestAsync(request);
-			var jObject = response.Deserialize<JObject>();
 
-			if (jObject == null || jObject.First == null)
+			if (response.Arguments == null)
 				return null;
 
 			NewTorrentInfo result = null;
-			JToken value = null;
+            object value;
 
-			if (jObject.TryGetValue("torrent-duplicate", out value))
-				result = JsonConvert.DeserializeObject<NewTorrentInfo>(value.ToString());
-			else if (jObject.TryGetValue("torrent-added", out value))
-				result = JsonConvert.DeserializeObject<NewTorrentInfo>(value.ToString());
+            if (response.Arguments.TryGetValue("torrent-duplicate", out value))
+                result = JsonSerializer.Deserialize<NewTorrentInfo>(((JsonElement)value).ToString());
+			else if (response.Arguments.TryGetValue("torrent-added", out value))
+                result = JsonSerializer.Deserialize<NewTorrentInfo>(((JsonElement)value).ToString());
 
 			return result;
 		}
@@ -337,9 +335,8 @@ namespace Transmission.API.RPC
 			var request = new TransmissionRequest("port-test");
 			var response = await SendRequestAsync(request);
 
-			var data = response.Deserialize<JObject>();
-			var result = (bool)data.GetValue("port-is-open");
-			return result;
+            var jsonElement = (JsonElement)response.Arguments["port-is-open"];
+            return jsonElement.GetBoolean();
 		}
 
 		/// <summary>
@@ -351,9 +348,8 @@ namespace Transmission.API.RPC
 			var request = new TransmissionRequest("blocklist-update");
 			var response = await SendRequestAsync(request);
 
-			var data = response.Deserialize<JObject>();
-			var result = (int)data.GetValue("blocklist-size");
-			return result;
+            var jsonElement = (JsonElement)response.Arguments["blocklist-size"];
+            return jsonElement.GetInt32();
 		}
 
 		/// <summary>
@@ -368,9 +364,8 @@ namespace Transmission.API.RPC
 			var request = new TransmissionRequest("free-space", arguments);
 			var response = await SendRequestAsync(request);
 
-			var data = response.Deserialize<JObject>();
-			var result = (long)data.GetValue("size-bytes");
-			return result;
+            var jsonElement = (JsonElement)response.Arguments["size-bytes"];
+            return jsonElement.GetInt64();
 		}
 
         #endregion
@@ -398,7 +393,8 @@ namespace Transmission.API.RPC
                 if (httpResponse.IsSuccessStatusCode)
                 {
                     var responseString = await httpResponse.Content.ReadAsStringAsync();
-                    result = JsonConvert.DeserializeObject<TransmissionResponse>(responseString);
+                    var options = new JsonSerializerOptions { IncludeFields = true };
+                    result = JsonSerializer.Deserialize<TransmissionResponse>(responseString, options);
 
                     if (result.Result != "success")
                         throw new Exception(result.Result);
@@ -417,7 +413,7 @@ namespace Transmission.API.RPC
                     }
                 }
                 else
-                    throw new HttpRequestException();
+                    throw new HttpRequestException(httpResponse.StatusCode.ToString());
             }
 
             return result;

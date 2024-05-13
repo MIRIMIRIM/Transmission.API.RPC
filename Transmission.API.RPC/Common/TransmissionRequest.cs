@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Transmission.API.RPC.Common
 {
@@ -15,7 +16,7 @@ namespace Transmission.API.RPC.Common
 		/// <summary>
 		/// Name of the method to invoke
 		/// </summary>
-		[JsonProperty("method")]
+		[JsonPropertyName("method")]
 		public string Method;
 
         /// <summary>

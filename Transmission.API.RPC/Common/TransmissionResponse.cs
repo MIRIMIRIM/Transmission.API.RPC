@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace Transmission.API.RPC.Common
 		/// <summary>
 		/// Contains "success" on success, or an error string on failure.
 		/// </summary>
-		[JsonProperty("result")]
+		[JsonPropertyName("result")]
 		public string Result;
 	}
 }
