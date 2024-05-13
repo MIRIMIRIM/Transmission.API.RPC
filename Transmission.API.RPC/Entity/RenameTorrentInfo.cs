@@ -31,4 +31,9 @@ namespace Transmission.API.RPC.Entity
         [JsonPropertyName("name")]
         public string Name { get; set; }
     }
+    
+    [JsonSerializable(typeof(RenameTorrentInfo))]
+    internal partial class RenameTorrentInfoContext : JsonSerializerContext
+    {
+    }
 }

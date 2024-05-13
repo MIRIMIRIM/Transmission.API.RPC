@@ -31,4 +31,9 @@ namespace Transmission.API.RPC.Entity
         public string HashString { get; set; }
 
     }
+
+    [JsonSerializable(typeof(NewTorrentInfo))]
+    internal partial class NewTorrentInfoContext : JsonSerializerContext
+    {
+    }
 }

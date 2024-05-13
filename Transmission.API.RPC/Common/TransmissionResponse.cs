@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transmission.API.RPC.Entity;
 
 namespace Transmission.API.RPC.Common
 {
@@ -17,5 +18,11 @@ namespace Transmission.API.RPC.Common
         /// </summary>
         [JsonPropertyName("result")]
         public string Result;
+    }
+
+    [JsonSourceGenerationOptions(IncludeFields = true)]
+    [JsonSerializable(typeof(TransmissionResponse))]
+    internal partial class TransmissionResponseContext : JsonSerializerContext
+    {
     }
 }

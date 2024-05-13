@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Transmission.API.RPC.Entity;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Transmission.API.RPC.Common
 {
@@ -34,19 +36,32 @@ namespace Transmission.API.RPC.Common
         /// <returns></returns>
         public virtual string ToJson()
         {
-            var options = new JsonSerializerOptions { WriteIndented = true, IncludeFields = true };
-            return JsonSerializer.Serialize(this, options);
+            return JsonSerializer.Serialize(this, CommunicateBaseContext.Default.CommunicateBase);
         }
 
         /// <summary>
         /// Deserialize to class
         /// </summary>
         /// <returns></returns>
-        public T Deserialize<T>()
+        public T Deserialize<T>(JsonTypeInfo<T> jsonTypeInfo)
         {
-            var options = new JsonSerializerOptions { IncludeFields = true };
-            var argumentsString = JsonSerializer.Serialize(this.Arguments);
-            return JsonSerializer.Deserialize<T>(argumentsString, options);
+            var argumentsString = JsonSerializer.Serialize(this.Arguments, ArgumentsContext.Default.DictionaryStringObject);
+            return JsonSerializer.Deserialize(argumentsString, jsonTypeInfo);
         }
+    }
+
+    [JsonSourceGenerationOptions(IncludeFields = true)]
+    [JsonSerializable(typeof(CommunicateBase))]
+    [JsonSerializable(typeof(TransmissionRequest))]
+    [JsonSerializable(typeof(TransmissionResponse))]
+    internal partial class CommunicateBaseContext : JsonSerializerContext
+    {
+    }
+
+    [JsonSourceGenerationOptions(IncludeFields = true)]
+    [JsonSerializable(typeof(Dictionary<string, object>))]
+    [JsonSerializable(typeof(JsonElement))]
+    internal partial class ArgumentsContext : JsonSerializerContext
+    {
     }
 }

@@ -91,4 +91,9 @@ namespace Transmission.API.RPC.Entity
         [JsonPropertyName("SecondsActive")]
         public int SecondsActive{ get; set; }
     }
+
+    [JsonSerializable(typeof(Statistic))]
+    internal partial class StatisticContext : JsonSerializerContext
+    {
+    }
 }

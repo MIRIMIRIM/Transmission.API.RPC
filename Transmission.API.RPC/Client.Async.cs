@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Transmission.API.RPC.Entity;
@@ -44,7 +45,7 @@ namespace Transmission.API.RPC
         {
             var request = new TransmissionRequest("session-stats");
             var response = await SendRequestAsync(request);
-            var result = response.Deserialize<Statistic>();
+            var result = response.Deserialize(StatisticContext.Default.Statistic);
             return result;
         }
 
@@ -57,7 +58,7 @@ namespace Transmission.API.RPC
         {
             var request = new TransmissionRequest("session-get");
             var response = await SendRequestAsync(request);
-            var result = response.Deserialize<SessionInfo>();
+            var result = response.Deserialize(SessionInfoContext.Default.SessionInfo);
             return result;
         }
 
@@ -84,9 +85,9 @@ namespace Transmission.API.RPC
             object value;
 
             if (response.Arguments.TryGetValue("torrent-duplicate", out value))
-                result = JsonSerializer.Deserialize<NewTorrentInfo>(((JsonElement)value).ToString());
+                result = JsonSerializer.Deserialize(((JsonElement)value).ToString(), NewTorrentInfoContext.Default.NewTorrentInfo);
             else if (response.Arguments.TryGetValue("torrent-added", out value))
-                result = JsonSerializer.Deserialize<NewTorrentInfo>(((JsonElement)value).ToString());
+                result = JsonSerializer.Deserialize(((JsonElement)value).ToString(), NewTorrentInfoContext.Default.NewTorrentInfo);
 
             return result;
         }
@@ -118,7 +119,7 @@ namespace Transmission.API.RPC
             var request = new TransmissionRequest("torrent-get", arguments);
 
             var response = await SendRequestAsync(request);
-            var result = response.Deserialize<TransmissionTorrents>();
+            var result = response.Deserialize(TransmissionTorrentsContext.Default.TransmissionTorrents);
 
             return result;
         }
@@ -303,7 +304,7 @@ namespace Transmission.API.RPC
             var request = new TransmissionRequest("torrent-rename-path", arguments);
             var response = await SendRequestAsync(request);
 
-            var result = response.Deserialize<RenameTorrentInfo>();
+            var result = response.Deserialize(RenameTorrentInfoContext.Default.RenameTorrentInfo);
 
             return result;
         }
@@ -392,9 +393,7 @@ namespace Transmission.API.RPC
             {
                 if (httpResponse.IsSuccessStatusCode)
                 {
-                    var responseString = await httpResponse.Content.ReadAsStringAsync();
-                    var options = new JsonSerializerOptions { IncludeFields = true };
-                    result = JsonSerializer.Deserialize<TransmissionResponse>(responseString, options);
+                    result = await httpResponse.Content.ReadFromJsonAsync(TransmissionResponseContext.Default.TransmissionResponse);
 
                     if (result.Result != "success")
                         throw new Exception(result.Result);

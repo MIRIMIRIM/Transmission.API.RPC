@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Transmission.API.RPC.Arguments;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Transmission.API.RPC.Common;
 
 namespace Transmission.API.RPC.Entity
 {
@@ -315,5 +316,10 @@ namespace Transmission.API.RPC.Entity
         /// </summary>
         [JsonPropertyName("version")]
         public string Version{ get; set; }
+    }
+
+    [JsonSerializable(typeof(SessionInfo))]
+    internal partial class SessionInfoContext : JsonSerializerContext
+    {
     }
 }

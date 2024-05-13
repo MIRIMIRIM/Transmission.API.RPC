@@ -855,4 +855,9 @@ namespace Transmission.API.RPC.Entity
         [JsonPropertyName("removed")]
         public TorrentInfo[] Removed{ get; set; }
     }
+
+    [JsonSerializable(typeof(TransmissionTorrents))]
+    internal partial class TransmissionTorrentsContext : JsonSerializerContext
+    {
+    }
 }
