@@ -27,7 +27,7 @@ namespace Transmission.API.RPC
                     throw e.InnerException;
                 }
 
-                throw e;
+                throw;
             }
         }
     }
