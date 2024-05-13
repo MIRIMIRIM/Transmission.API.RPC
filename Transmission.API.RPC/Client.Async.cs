@@ -13,40 +13,40 @@ using System.Text.Json;
 
 namespace Transmission.API.RPC
 {
-	public partial class Client
-	{
-		#region Session methods
+    public partial class Client
+    {
+        #region Session methods
 
-		/// <summary>
-		/// Close current session (API: session-close)
-		/// </summary>
-		public async Task CloseSessionAsync()
-		{
-			var request = new TransmissionRequest("session-close");
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Close current session (API: session-close)
+        /// </summary>
+        public async Task CloseSessionAsync()
+        {
+            var request = new TransmissionRequest("session-close");
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Set information to current session (API: session-set)
-		/// </summary>
-		/// <param name="settings">New session settings</param>
-		public async Task SetSessionSettingsAsync(SessionSettings settings)
-		{
-			var request = new TransmissionRequest("session-set", settings);
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Set information to current session (API: session-set)
+        /// </summary>
+        /// <param name="settings">New session settings</param>
+        public async Task SetSessionSettingsAsync(SessionSettings settings)
+        {
+            var request = new TransmissionRequest("session-set", settings);
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Get session stat
-		/// </summary>
-		/// <returns>Session stat</returns>
-		public async Task<Statistic> GetSessionStatisticAsync()
-		{
-			var request = new TransmissionRequest("session-stats");
-			var response = await SendRequestAsync(request);
-			var result = response.Deserialize<Statistic>();
-			return result;
-		}
+        /// <summary>
+        /// Get session stat
+        /// </summary>
+        /// <returns>Session stat</returns>
+        public async Task<Statistic> GetSessionStatisticAsync()
+        {
+            var request = new TransmissionRequest("session-stats");
+            var response = await SendRequestAsync(request);
+            var result = response.Deserialize<Statistic>();
+            return result;
+        }
 
         /// <summary>
         /// Get information of current session (API: session-get)
@@ -54,74 +54,74 @@ namespace Transmission.API.RPC
         /// <returns>Session information</returns>
         //TODO: support optional "fields" argument
         public async Task<SessionInfo> GetSessionInformationAsync()
-		{
-			var request = new TransmissionRequest("session-get");
-			var response = await SendRequestAsync(request);
-			var result = response.Deserialize<SessionInfo>();
-			return result;
-		}
+        {
+            var request = new TransmissionRequest("session-get");
+            var response = await SendRequestAsync(request);
+            var result = response.Deserialize<SessionInfo>();
+            return result;
+        }
 
-		#endregion
+        #endregion
 
-		#region Torrents methods
+        #region Torrents methods
 
-		/// <summary>
-		/// Add torrent (API: torrent-add)
-		/// </summary>
-		/// <returns>Torrent info (ID, Name and HashString)</returns>
-		public async Task<NewTorrentInfo> TorrentAddAsync(NewTorrent torrent)
-		{
-			if (String.IsNullOrWhiteSpace(torrent.Metainfo) && String.IsNullOrWhiteSpace(torrent.Filename))
-				throw new Exception("Either \"filename\" or \"metainfo\" must be included.");
+        /// <summary>
+        /// Add torrent (API: torrent-add)
+        /// </summary>
+        /// <returns>Torrent info (ID, Name and HashString)</returns>
+        public async Task<NewTorrentInfo> TorrentAddAsync(NewTorrent torrent)
+        {
+            if (String.IsNullOrWhiteSpace(torrent.Metainfo) && String.IsNullOrWhiteSpace(torrent.Filename))
+                throw new Exception("Either \"filename\" or \"metainfo\" must be included.");
 
-			var request = new TransmissionRequest("torrent-add", torrent);
-			var response = await SendRequestAsync(request);
+            var request = new TransmissionRequest("torrent-add", torrent);
+            var response = await SendRequestAsync(request);
 
-			if (response.Arguments == null)
-				return null;
+            if (response.Arguments == null)
+                return null;
 
-			NewTorrentInfo result = null;
+            NewTorrentInfo result = null;
             object value;
 
             if (response.Arguments.TryGetValue("torrent-duplicate", out value))
                 result = JsonSerializer.Deserialize<NewTorrentInfo>(((JsonElement)value).ToString());
-			else if (response.Arguments.TryGetValue("torrent-added", out value))
+            else if (response.Arguments.TryGetValue("torrent-added", out value))
                 result = JsonSerializer.Deserialize<NewTorrentInfo>(((JsonElement)value).ToString());
 
-			return result;
-		}
+            return result;
+        }
 
         /// <summary>
         /// Set torrent params (API: torrent-set)
         /// </summary>
         /// <param name="settings">Torrent settings</param>
         public async Task TorrentSetAsync(TorrentSettings settings)
-		{
-			var request = new TransmissionRequest("torrent-set", settings);
-			var response = await SendRequestAsync(request);
-		}
+        {
+            var request = new TransmissionRequest("torrent-set", settings);
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Get fields of torrents from ids (API: torrent-get)
-		/// </summary>
-		/// <param name="fields">Fields of torrents</param>
-		/// <param name="ids">IDs of torrents (null or empty for get all torrents)</param>
-		/// <returns>Torrents info</returns>
-		public async Task<TransmissionTorrents> TorrentGetAsync(string[] fields, params int[] ids)
-		{
-			var arguments = new Dictionary<string, object>();
-			arguments.Add("fields", fields);
+        /// <summary>
+        /// Get fields of torrents from ids (API: torrent-get)
+        /// </summary>
+        /// <param name="fields">Fields of torrents</param>
+        /// <param name="ids">IDs of torrents (null or empty for get all torrents)</param>
+        /// <returns>Torrents info</returns>
+        public async Task<TransmissionTorrents> TorrentGetAsync(string[] fields, params int[] ids)
+        {
+            var arguments = new Dictionary<string, object>();
+            arguments.Add("fields", fields);
 
-			if (ids != null && ids.Length > 0)
-				arguments.Add("ids", ids);
+            if (ids != null && ids.Length > 0)
+                arguments.Add("ids", ids);
 
-			var request = new TransmissionRequest("torrent-get", arguments);
+            var request = new TransmissionRequest("torrent-get", arguments);
 
-			var response = await SendRequestAsync(request);
-			var result = response.Deserialize<TransmissionTorrents>();
+            var response = await SendRequestAsync(request);
+            var result = response.Deserialize<TransmissionTorrents>();
 
-			return result;
-		}
+            return result;
+        }
 
         /// <summary>
         /// Remove torrents
@@ -129,244 +129,244 @@ namespace Transmission.API.RPC
         /// <param name="ids">Torrents id</param>
         /// <param name="deleteData">Remove data</param>
         public async Task TorrentRemoveAsync(int[] ids, bool deleteData = false)
-		{
-			var arguments = new Dictionary<string, object>();
+        {
+            var arguments = new Dictionary<string, object>();
 
-			arguments.Add("ids", ids);
-			arguments.Add("delete-local-data", deleteData);
+            arguments.Add("ids", ids);
+            arguments.Add("delete-local-data", deleteData);
 
-			var request = new TransmissionRequest("torrent-remove", arguments);
-			var response = await SendRequestAsync(request);
-		}
+            var request = new TransmissionRequest("torrent-remove", arguments);
+            var response = await SendRequestAsync(request);
+        }
 
-		#region Torrent Start
+        #region Torrent Start
 
-		/// <summary>
-		/// Start torrents (API: torrent-start)
-		/// </summary>
-		/// <param name="ids">A list of torrent id numbers, sha1 hash strings, or both</param>
-		public async Task TorrentStartAsync(object[] ids)
-		{
-			var request = new TransmissionRequest("torrent-start", new Dictionary<string, object> { { "ids", ids } });
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Start torrents (API: torrent-start)
+        /// </summary>
+        /// <param name="ids">A list of torrent id numbers, sha1 hash strings, or both</param>
+        public async Task TorrentStartAsync(object[] ids)
+        {
+            var request = new TransmissionRequest("torrent-start", new Dictionary<string, object> { { "ids", ids } });
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Start recently active torrents (API: torrent-start)
-		/// </summary>
-		public async Task TorrentStartAsync()
-		{
-			var request = new TransmissionRequest("torrent-start", new Dictionary<string, object> { { "ids", "recently-active" } });
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Start recently active torrents (API: torrent-start)
+        /// </summary>
+        public async Task TorrentStartAsync()
+        {
+            var request = new TransmissionRequest("torrent-start", new Dictionary<string, object> { { "ids", "recently-active" } });
+            var response = await SendRequestAsync(request);
+        }
 
-		#endregion
+        #endregion
 
-		#region Torrent Start Now
+        #region Torrent Start Now
 
-		/// <summary>
-		/// Start now torrents (API: torrent-start-now)
-		/// </summary>
-		/// <param name="ids">A list of torrent id numbers, sha1 hash strings, or both</param>
-		public async Task TorrentStartNowAsync(object[] ids)
-		{
-			var request = new TransmissionRequest("torrent-start-now", new Dictionary<string, object> { { "ids", ids } });
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Start now torrents (API: torrent-start-now)
+        /// </summary>
+        /// <param name="ids">A list of torrent id numbers, sha1 hash strings, or both</param>
+        public async Task TorrentStartNowAsync(object[] ids)
+        {
+            var request = new TransmissionRequest("torrent-start-now", new Dictionary<string, object> { { "ids", ids } });
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Start now recently active torrents (API: torrent-start-now)
-		/// </summary>
-		public async Task TorrentStartNowAsync()
-		{
-			var request = new TransmissionRequest("torrent-start-now", new Dictionary<string, object> { { "ids", "recently-active" } });
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Start now recently active torrents (API: torrent-start-now)
+        /// </summary>
+        public async Task TorrentStartNowAsync()
+        {
+            var request = new TransmissionRequest("torrent-start-now", new Dictionary<string, object> { { "ids", "recently-active" } });
+            var response = await SendRequestAsync(request);
+        }
 
-		#endregion
+        #endregion
 
-		#region Torrent Stop
+        #region Torrent Stop
 
-		/// <summary>
-		/// Stop torrents (API: torrent-stop)
-		/// </summary>
-		/// <param name="ids">A list of torrent id numbers, sha1 hash strings, or both</param>
-		public async Task TorrentStopAsync(object[] ids)
-		{
-			var request = new TransmissionRequest("torrent-stop", new Dictionary<string, object> { { "ids", ids } });
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Stop torrents (API: torrent-stop)
+        /// </summary>
+        /// <param name="ids">A list of torrent id numbers, sha1 hash strings, or both</param>
+        public async Task TorrentStopAsync(object[] ids)
+        {
+            var request = new TransmissionRequest("torrent-stop", new Dictionary<string, object> { { "ids", ids } });
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Stop recently active torrents (API: torrent-stop)
-		/// </summary>
-		public async Task TorrentStopAsync()
-		{
-			var request = new TransmissionRequest("torrent-stop", new Dictionary<string, object> { { "ids", "recently-active" } });
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Stop recently active torrents (API: torrent-stop)
+        /// </summary>
+        public async Task TorrentStopAsync()
+        {
+            var request = new TransmissionRequest("torrent-stop", new Dictionary<string, object> { { "ids", "recently-active" } });
+            var response = await SendRequestAsync(request);
+        }
 
-		#endregion
+        #endregion
 
-		#region Torrent Verify
+        #region Torrent Verify
 
-		/// <summary>
-		/// Verify torrents (API: torrent-verify)
-		/// </summary>
-		/// <param name="ids">A list of torrent id numbers, sha1 hash strings, or both</param>
-		public async Task TorrentVerifyAsync(object[] ids)
-		{
-			var request = new TransmissionRequest("torrent-verify", new Dictionary<string, object> { { "ids", ids } });
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Verify torrents (API: torrent-verify)
+        /// </summary>
+        /// <param name="ids">A list of torrent id numbers, sha1 hash strings, or both</param>
+        public async Task TorrentVerifyAsync(object[] ids)
+        {
+            var request = new TransmissionRequest("torrent-verify", new Dictionary<string, object> { { "ids", ids } });
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Verify recently active torrents (API: torrent-verify)
-		/// </summary>
-		public async Task TorrentVerifyAsync()
-		{
-			var request = new TransmissionRequest("torrent-verify", new Dictionary<string, object> { { "ids", "recently-active" } });
-			var response = await SendRequestAsync(request);
-		}
-		#endregion
+        /// <summary>
+        /// Verify recently active torrents (API: torrent-verify)
+        /// </summary>
+        public async Task TorrentVerifyAsync()
+        {
+            var request = new TransmissionRequest("torrent-verify", new Dictionary<string, object> { { "ids", "recently-active" } });
+            var response = await SendRequestAsync(request);
+        }
+        #endregion
 
-		/// <summary>
-		/// Move torrents in queue on top (API: queue-move-top)
-		/// </summary>
-		/// <param name="ids">Torrents id</param>
-		public async Task TorrentQueueMoveTopAsync(int[] ids)
-		{
-			var request = new TransmissionRequest("queue-move-top", new Dictionary<string, object> { { "ids", ids } });
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Move torrents in queue on top (API: queue-move-top)
+        /// </summary>
+        /// <param name="ids">Torrents id</param>
+        public async Task TorrentQueueMoveTopAsync(int[] ids)
+        {
+            var request = new TransmissionRequest("queue-move-top", new Dictionary<string, object> { { "ids", ids } });
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Move up torrents in queue (API: queue-move-up)
-		/// </summary>
-		/// <param name="ids"></param>
-		public async Task TorrentQueueMoveUpAsync(int[] ids)
-		{
-			var request = new TransmissionRequest("queue-move-up", new Dictionary<string, object> { { "ids", ids } });
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Move up torrents in queue (API: queue-move-up)
+        /// </summary>
+        /// <param name="ids"></param>
+        public async Task TorrentQueueMoveUpAsync(int[] ids)
+        {
+            var request = new TransmissionRequest("queue-move-up", new Dictionary<string, object> { { "ids", ids } });
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Move down torrents in queue (API: queue-move-down)
-		/// </summary>
-		/// <param name="ids"></param>
-		public async Task TorrentQueueMoveDownAsync(int[] ids)
-		{
-			var request = new TransmissionRequest("queue-move-down", new Dictionary<string, object> { { "ids", ids } });
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Move down torrents in queue (API: queue-move-down)
+        /// </summary>
+        /// <param name="ids"></param>
+        public async Task TorrentQueueMoveDownAsync(int[] ids)
+        {
+            var request = new TransmissionRequest("queue-move-down", new Dictionary<string, object> { { "ids", ids } });
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Move torrents to bottom in queue  (API: queue-move-bottom)
-		/// </summary>
-		/// <param name="ids"></param>
-		public async Task TorrentQueueMoveBottomAsync(int[] ids)
-		{
-			var request = new TransmissionRequest("queue-move-bottom", new Dictionary<string, object> { { "ids", ids } });
-			var response = await SendRequestAsync(request);
-		}
+        /// <summary>
+        /// Move torrents to bottom in queue  (API: queue-move-bottom)
+        /// </summary>
+        /// <param name="ids"></param>
+        public async Task TorrentQueueMoveBottomAsync(int[] ids)
+        {
+            var request = new TransmissionRequest("queue-move-bottom", new Dictionary<string, object> { { "ids", ids } });
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Set new location for torrents files (API: torrent-set-location)
-		/// </summary>
-		/// <param name="ids">Torrent ids</param>
-		/// <param name="location">The new torrent location</param>
-		/// <param name="move">Move from previous location</param>
-		public async Task TorrentSetLocationAsync(int[] ids, string location, bool move)
-		{
-			var arguments = new Dictionary<string, object>();
-			arguments.Add("ids", ids);
-			arguments.Add("location", location);
-			arguments.Add("move", move);
+        /// <summary>
+        /// Set new location for torrents files (API: torrent-set-location)
+        /// </summary>
+        /// <param name="ids">Torrent ids</param>
+        /// <param name="location">The new torrent location</param>
+        /// <param name="move">Move from previous location</param>
+        public async Task TorrentSetLocationAsync(int[] ids, string location, bool move)
+        {
+            var arguments = new Dictionary<string, object>();
+            arguments.Add("ids", ids);
+            arguments.Add("location", location);
+            arguments.Add("move", move);
 
-			var request = new TransmissionRequest("torrent-set-location", arguments);
-			var response = await SendRequestAsync(request);
-		}
+            var request = new TransmissionRequest("torrent-set-location", arguments);
+            var response = await SendRequestAsync(request);
+        }
 
-		/// <summary>
-		/// Rename a file or directory in a torrent (API: torrent-rename-path)
-		/// </summary>
-		/// <param name="id">The torrent whose path will be renamed</param>
-		/// <param name="path">The path to the file or folder that will be renamed</param>
-		/// <param name="name">The file or folder's new name</param>
-		public async Task<RenameTorrentInfo> TorrentRenamePathAsync(int id, string path, string name)
-		{
-			var arguments = new Dictionary<string, object>();
-			arguments.Add("ids", new int[] { id });
-			arguments.Add("path", path);
-			arguments.Add("name", name);
+        /// <summary>
+        /// Rename a file or directory in a torrent (API: torrent-rename-path)
+        /// </summary>
+        /// <param name="id">The torrent whose path will be renamed</param>
+        /// <param name="path">The path to the file or folder that will be renamed</param>
+        /// <param name="name">The file or folder's new name</param>
+        public async Task<RenameTorrentInfo> TorrentRenamePathAsync(int id, string path, string name)
+        {
+            var arguments = new Dictionary<string, object>();
+            arguments.Add("ids", new int[] { id });
+            arguments.Add("path", path);
+            arguments.Add("name", name);
 
-			var request = new TransmissionRequest("torrent-rename-path", arguments);
-			var response = await SendRequestAsync(request);
+            var request = new TransmissionRequest("torrent-rename-path", arguments);
+            var response = await SendRequestAsync(request);
 
-			var result = response.Deserialize<RenameTorrentInfo>();
+            var result = response.Deserialize<RenameTorrentInfo>();
 
-			return result;
-		}
+            return result;
+        }
 
-		//method name not recognized
-		///// <summary>
-		///// Reannounce torrent (API: torrent-reannounce)
-		///// </summary>
-		///// <param name="ids"></param>
-		//public void ReannounceTorrents(object[] ids)
-		//{
-		//    var arguments = new Dictionary<string, object>();
-		//    arguments.Add("ids", ids);
+        //method name not recognized
+        ///// <summary>
+        ///// Reannounce torrent (API: torrent-reannounce)
+        ///// </summary>
+        ///// <param name="ids"></param>
+        //public void ReannounceTorrents(object[] ids)
+        //{
+        //    var arguments = new Dictionary<string, object>();
+        //    arguments.Add("ids", ids);
 
-		//    var request = new TransmissionRequest("torrent-reannounce", arguments);
-		//    var response = SendRequest(request);
-		//}
+        //    var request = new TransmissionRequest("torrent-reannounce", arguments);
+        //    var response = SendRequest(request);
+        //}
 
-		#endregion
+        #endregion
 
-		#region System
+        #region System
 
-		/// <summary>
-		/// See if your incoming peer port is accessible from the outside world (API: port-test)
-		/// </summary>
-		/// <returns>Accessible state</returns>
-		public async Task<bool> PortTestAsync()
-		{
-			var request = new TransmissionRequest("port-test");
-			var response = await SendRequestAsync(request);
+        /// <summary>
+        /// See if your incoming peer port is accessible from the outside world (API: port-test)
+        /// </summary>
+        /// <returns>Accessible state</returns>
+        public async Task<bool> PortTestAsync()
+        {
+            var request = new TransmissionRequest("port-test");
+            var response = await SendRequestAsync(request);
 
             var jsonElement = (JsonElement)response.Arguments["port-is-open"];
             return jsonElement.GetBoolean();
-		}
+        }
 
-		/// <summary>
-		/// Update blocklist (API: blocklist-update)
-		/// </summary>
-		/// <returns>Blocklist size</returns>
-		public async Task<int> BlocklistUpdateAsync()
-		{
-			var request = new TransmissionRequest("blocklist-update");
-			var response = await SendRequestAsync(request);
+        /// <summary>
+        /// Update blocklist (API: blocklist-update)
+        /// </summary>
+        /// <returns>Blocklist size</returns>
+        public async Task<int> BlocklistUpdateAsync()
+        {
+            var request = new TransmissionRequest("blocklist-update");
+            var response = await SendRequestAsync(request);
 
             var jsonElement = (JsonElement)response.Arguments["blocklist-size"];
             return jsonElement.GetInt32();
-		}
+        }
 
-		/// <summary>
-		/// Get free space is available in a client-specified folder.
-		/// </summary>
-		/// <param name="path">The directory to query</param>
-		public async Task<long> FreeSpaceAsync(string path)
-		{
-			var arguments = new Dictionary<string, object>();
-			arguments.Add("path", path);
+        /// <summary>
+        /// Get free space is available in a client-specified folder.
+        /// </summary>
+        /// <param name="path">The directory to query</param>
+        public async Task<long> FreeSpaceAsync(string path)
+        {
+            var arguments = new Dictionary<string, object>();
+            arguments.Add("path", path);
 
-			var request = new TransmissionRequest("free-space", arguments);
-			var response = await SendRequestAsync(request);
+            var request = new TransmissionRequest("free-space", arguments);
+            var response = await SendRequestAsync(request);
 
             var jsonElement = (JsonElement)response.Arguments["size-bytes"];
             return jsonElement.GetInt64();
-		}
+        }
 
         #endregion
 

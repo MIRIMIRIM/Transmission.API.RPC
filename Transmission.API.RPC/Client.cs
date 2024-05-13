@@ -116,7 +116,7 @@ namespace Transmission.API.RPC
         /// Add torrent (API: torrent-add)
         /// </summary>
         /// <returns>Torrent info (ID, Name and HashString)</returns>
-		public NewTorrentInfo TorrentAdd(NewTorrent torrent)
+        public NewTorrentInfo TorrentAdd(NewTorrent torrent)
         {
             var task = TorrentAddAsync(torrent);
             task.WaitAndUnwrapException();
@@ -285,7 +285,7 @@ namespace Transmission.API.RPC
         /// <param name="id">The torrent whose path will be renamed</param>
         /// <param name="path">The path to the file or folder that will be renamed</param>
         /// <param name="name">The file or folder's new name</param>
-		public RenameTorrentInfo TorrentRenamePath(int id, string path, string name)
+        public RenameTorrentInfo TorrentRenamePath(int id, string path, string name)
         {
             var task = TorrentRenamePathAsync(id, path, name);
             task.WaitAndUnwrapException();

@@ -86,47 +86,47 @@ namespace Transmission.API.RPC.Arguments
         /// Strings of announce URLs to add
         /// </summary>
         [Obsolete("TrackerAdd is obsolete since Transmission 4.0.0, use TrackerList instead.")]
-		public string[] TrackerAdd { get { return GetValue<string[]>("trackerAdd"); } set { this["trackerAdd"] = value; } }
+        public string[] TrackerAdd { get { return GetValue<string[]>("trackerAdd"); } set { this["trackerAdd"] = value; } }
 
         /// <summary>
         /// Ids of trackers to remove
         /// </summary>
         [Obsolete("TrackerRemove is obsolete since Transmission 4.0.0, use TrackerList instead.")]
-		public int[] TrackerRemove { get { return GetValue<int[]>("trackerRemove"); } set { this["trackerRemove"] = value; } }
+        public int[] TrackerRemove { get { return GetValue<int[]>("trackerRemove"); } set { this["trackerRemove"] = value; } }
 
         /// <summary>
         /// String of announce URLs, one per line, with a blank line between tiers
         /// </summary>
         public string[] TrackerList { get { return GetValue<string[]>("trackerList"); } set { this["trackerAdd"] = value; } }
 
-		/// <summary>
-		/// Files wanted
-		/// </summary>
-		public string[] FilesWanted { get { return GetValue<string[]>("files-wanted"); } set { this["files-wanted"] = value; } }
+        /// <summary>
+        /// Files wanted
+        /// </summary>
+        public string[] FilesWanted { get { return GetValue<string[]>("files-wanted"); } set { this["files-wanted"] = value; } }
 
-		/// <summary>
-		/// Files unwanted
-		/// </summary>
-		public string[] FilesUnwanted { get { return GetValue<string[]>("files-unwanted"); } set { this["files-unwanted"] = value; } }
+        /// <summary>
+        /// Files unwanted
+        /// </summary>
+        public string[] FilesUnwanted { get { return GetValue<string[]>("files-unwanted"); } set { this["files-unwanted"] = value; } }
 
-		/// <summary>
-		/// High priority files
-		/// </summary>
-		public string[] PriorityHigh { get { return GetValue<string[]>("priority-high"); } set { this["priority-high"] = value; } }
+        /// <summary>
+        /// High priority files
+        /// </summary>
+        public string[] PriorityHigh { get { return GetValue<string[]>("priority-high"); } set { this["priority-high"] = value; } }
 
-		/// <summary>
-		/// Low priority files
-		/// </summary>
-		public string[] PriorityLow { get { return GetValue<string[]>("priority-low"); } set { this["priority-low"] = value; } }
+        /// <summary>
+        /// Low priority files
+        /// </summary>
+        public string[] PriorityLow { get { return GetValue<string[]>("priority-low"); } set { this["priority-low"] = value; } }
 
-		/// <summary>
-		/// Normal priority files
-		/// </summary>
-		public string[] PriorityNormal { get { return GetValue<string[]>("priority-normal"); } set { this["priority-normal"] = value; } }
+        /// <summary>
+        /// Normal priority files
+        /// </summary>
+        public string[] PriorityNormal { get { return GetValue<string[]>("priority-normal"); } set { this["priority-normal"] = value; } }
 
-		//TODO: Add and test
-		//"trackerReplace"      | array      pairs of <trackerId/new announce URLs>
-		//public [] trackerReplace;
+        //TODO: Add and test
+        //"trackerReplace"      | array      pairs of <trackerId/new announce URLs>
+        //public [] trackerReplace;
 
-	}
+    }
 }

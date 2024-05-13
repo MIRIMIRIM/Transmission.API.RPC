@@ -23,7 +23,7 @@ namespace Transmission.API.RPC.Entity
         public string DownloadDirectory { get { return GetValue<string>("download-dir"); } set { this["download-dir"] = value; } }
 
         /// <summary>
-		/// filename (relative to the server) or URL of the .torrent file (Priority than the metadata)
+        /// filename (relative to the server) or URL of the .torrent file (Priority than the metadata)
         /// </summary>
         public string Filename { get { return GetValue<string>("filename"); } set { this["filename"] = value; } }
 

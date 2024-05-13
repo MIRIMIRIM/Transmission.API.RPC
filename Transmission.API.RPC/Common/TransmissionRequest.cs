@@ -8,16 +8,16 @@ using System.Text.Json.Serialization;
 
 namespace Transmission.API.RPC.Common
 {
-	/// <summary>
-	/// Transmission request 
-	/// </summary>
-	public class TransmissionRequest : CommunicateBase
-	{
-		/// <summary>
-		/// Name of the method to invoke
-		/// </summary>
-		[JsonPropertyName("method")]
-		public string Method;
+    /// <summary>
+    /// Transmission request 
+    /// </summary>
+    public class TransmissionRequest : CommunicateBase
+    {
+        /// <summary>
+        /// Name of the method to invoke
+        /// </summary>
+        [JsonPropertyName("method")]
+        public string Method;
 
         /// <summary>
         /// Initialize request
@@ -33,11 +33,11 @@ namespace Transmission.API.RPC.Common
         /// </summary>
         /// <param name="method">Method name</param>
         /// <param name="arguments">Arguments</param>
-		public TransmissionRequest(string method, ArgumentsBase arguments)
-		{
-			this.Method = method;
-			this.Arguments = arguments.Data;
-		}
+        public TransmissionRequest(string method, ArgumentsBase arguments)
+        {
+            this.Method = method;
+            this.Arguments = arguments.Data;
+        }
 
         /// <summary>
         /// Initialize request 
@@ -49,5 +49,5 @@ namespace Transmission.API.RPC.Common
             this.Method = method;
             this.Arguments = arguments;
         }
-	}
+    }
 }
